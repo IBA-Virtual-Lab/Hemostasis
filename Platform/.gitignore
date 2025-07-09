@@ -1,0 +1,42 @@
+# /Library/ArtifactDB  # oversize, necessary
+# /Library/PackageCache/com.unity.toolchain.win-x86_64-linux-x86_64@2.0.5/data~/payload.tar.7z  # oversize, probably not necessary
+# Library/ArtifactDB
+# Library/PackageCache/com.unity.toolchain.win-x86_64-linux-x86_64@2.0.5/data~/payload.tar.7z
+# Library/Bee/artifacts/WebGL/build/debug_WebGL_wasm/build.framework.js
+# Library/Bee/artifacts/WebGL/build/debug_WebGL_wasm/build.js
+
+# Ignore everything in this directory
+*
+
+# Always include the .gitignore file itself
+!.gitignore
+
+# But don't ignore directories themselves
+!*/
+
+# Now, explicitly un-ignore the directories you want to track.
+# Add your desired directories below, one per line.
+# Example:
+!Assets/
+!Assets/**
+!ProjectSettings/
+!ProjectSettings/**
+!Packages/
+!Packages/ **
+
+#!my_important_feature_module/
+#!src/
+#!docs/
+#!config/
+#!tests/
+
+# If you want to un-ignore specific files within an un-ignored directory,
+# you don't need to do anything special, as the directory itself is now tracked.
+# However, if you have a specific file type within an un-ignored directory
+# that you *still* want to ignore, you can add it here.
+# Example (if 'src/' is un-ignored, but you want to ignore all '.log' files within it):
+# src/**/*.log
+
+# If you want to un-ignore a specific file directly in the root,
+# you would list it like this:
+#!important_root_file.txt
