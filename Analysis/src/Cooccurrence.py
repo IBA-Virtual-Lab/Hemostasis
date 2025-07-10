@@ -40,7 +40,7 @@ def cooccurrence_cluster_graph(file_path, fontsizer=20):
     # Compute layout using Fruchterman-Reingold force-directed algorithm. Increasing 'k' increases repulsion between nodes.
     pos = nx.spring_layout(G, weight='weight', iterations=1000, seed=10, k=0.5)
 
-    # Define custom node sizes based on weighting
+    # Define custom node sizes based on weighting occurrence counts by number of respondents represented
     node_sizes_map = {
         'Negative':123,
         'Positive':93,
