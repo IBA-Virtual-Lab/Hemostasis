@@ -3,6 +3,71 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import textwrap
 import seaborn as sns
+import statsmodels.api as sm
+import textwrap
+
+
+def analyze_community_influence(df, communities, dependent_var, community_sizes, wrap_width=30, fontsize=15):
+    """
+    Analyzes the influence of Louvain communities on a dependent variable using R-squared and average coefficients.
+
+    Parameters:
+        df (pd.DataFrame): The dataframe containing independent and dependent variables.
+        communities (list of sets): List of sets, each containing variable names in a community.
+        dependent_var (str): The name of the dependent variable column.
+        wrap_width (int): Number of characters before wrapping x-axis labels.
+
+    Returns:
+        pd.DataFrame: Summary of R-squared and average signed coefficients for each community.
+    """
+    summary_data = []
+
+    for i, community in enumerate(communities):
+        X = df[list(community)]
+        X = sm.add_constant(X)
+        y = df[dependent_var]
+
+        model = sm.OLS(y, X).fit()
+        avg_coef = model.params.drop('const').mean()
+        r_squared = model.rsquared
+
+        summary_data.append({
+            'Community': community,
+            'R_squared': r_squared,
+            'Avg_Coefficient': avg_coef
+        })
+
+    summary_df = pd.DataFrame(summary_data)
+    summary_df['Size'] = community_sizes
+    summary_df = summary_df.sort_values(by='Avg_Coefficient', ascending=True).reset_index(drop=True)
+    summary_df.to_csv('../data/cluster_summary.csv', index=False, sep=';')
+
+    # Create wrapped labels for x-axis
+    summary_df['Label'] = summary_df['Community'].apply(
+        lambda s: '\n'.join(textwrap.wrap(', '.join(s), wrap_width))
+    )
+
+    # Plotting
+    fig, ax1 = plt.subplots(figsize=(10, 10))
+
+    ax1.bar(summary_df['Label'], summary_df['R_squared'], color='skyblue', label='R-squared', width=0.95)
+    ax1.set_ylabel('R-squared', color='blue', fontsize=fontsize)
+    ax1.tick_params(axis='y', labelcolor='blue', labelsize=fontsize)
+    ax1.set_xticklabels(summary_df['Label'], rotation=90, ha='center', fontsize=fontsize)
+
+    ax2 = ax1.twinx()
+    ax2.plot(summary_df['Label'], summary_df['Avg_Coefficient'], color='red', linestyle='None', marker='o', label='Avg Coefficient')
+    for i, val in enumerate(summary_df['Avg_Coefficient']):
+        ax2.text(i, val, f'{val:.2f}', color='red', ha='center', fontsize=fontsize, va='bottom' if val >= 0 else 'top')
+    ax2.set_ylabel('Average Coefficient', color='red', fontsize=fontsize)
+    ax2.tick_params(axis='y', labelcolor='red', labelsize=fontsize)
+
+    # plt.title('Community Influence on Dependent Variable')
+    fig.tight_layout()
+    plt.savefig('../data/metrics.png', format='png', dpi=600)  # Save the plot as a PNG file
+    # plt.show()
+
+    return summary_df
 
 
 def cooccurrence_cluster_graph(file_path, fontsizer=20):
@@ -69,7 +134,19 @@ def cooccurrence_cluster_graph(file_path, fontsizer=20):
     # Detect communities (clusters) using the Louvain Community Detection Algorithm
     clusters = nx.community.louvain_communities(G, resolution=2, seed=12)
     num_partitions = len(clusters)
-    # print(clusters)
+    print(clusters)
+
+    community_sizes = []
+    for community in clusters:
+        total_size = sum(node_sizes_map.get(node, 0) for node in community)
+        community_sizes.append(total_size)
+        print(community, 'Occurrences: ', total_size)
+
+    df_full = pd.read_csv('../data/regression_input.csv', index_col=0, header=0,
+                          sep=';')  # Replace with your actual file path
+    df_vars = df_full.iloc[:, 5:]
+
+    analyze_community_influence(df_vars, clusters, 'Eval6', community_sizes)
 
     # Create a color pallet for the number of clusters
     seaborn_palette_name = 'pastel'
@@ -107,8 +184,7 @@ def cooccurrence_cluster_graph(file_path, fontsizer=20):
     labels = nx.get_edge_attributes(G, 'weight')
     nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=(fontsizer-5))
     plt.savefig('../data/cooccurrence.png', format='png', dpi=600)  # Save the plot as a PNG file
-    plt.show()
-
+    # plt.show()
 
 if __name__ == "__main__":
     matrix_file = "../data/CodeVCode.csv"  # Path to the co-occurrence matrix CSV file
