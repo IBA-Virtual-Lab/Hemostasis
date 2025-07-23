@@ -1,0 +1,8 @@
+Community;R_squared;Avg_Coefficient;Size
+{'Simulation not needed', 'Execution problems', 'Program not resetting'};0.5794193753747197;-0.017830076412376227;36
+{'Positive', 'Repetition', 'Procedural Familiarization', 'Physical Familiarization'};0.4123094514230986;-0.006872253897968914;119
+{'Insufficiently descriptive', 'Pedagogic problems'};0.04750436612474185;0.0015944292594038886;36
+{'Pipette interactivity', 'Over-automation', 'Specific request', 'More emphasis on machine', 'Request for Norsk'};0.6361299165768031;0.01188443299609187;120
+{'Negative', 'Visibility', 'UI problems'};0.3686158914094476;0.013514622671665843;182
+{'Prefer other sources'};0.16534454129763332;0.017161016949152518;18
+{'Mismatch to real', 'Direction problems'};0.18368810138276903;0.02275485436893205;23

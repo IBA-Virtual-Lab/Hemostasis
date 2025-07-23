@@ -10,7 +10,21 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\data\cluster_summary.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\data\raw_counts.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\data\regression_input.csv">
           <value>
             <Attribute>
               <option name="separator" value=";" />
